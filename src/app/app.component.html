@@ -1,0 +1,81 @@
+<!-- <div>{{ appState$ | async | json }}</div> -->
+
+<div class="page-content container note-has-grid">
+    <ul class="nav nav-pills p-3 bg-white mb-3 rounded-pill align-items-center">
+        <li class="nav-item pointer">
+            <a class="pointer nav-link rounded-pill note-link d-flex align-items-center px-2 px-md-3 mr-0 mr-md-2">
+                <span class="d-none d-md-block">All Notes</span>
+            </a>
+        </li>
+        <li class="nav-item pointer">
+            <a class="pointer nav-link rounded-pill note-link d-flex align-items-center px-2 px-md-3 mr-0 mr-md-2">
+              <span class="d-none d-md-block">
+                High <i class="point fa fa-circle ml-1 font-10" style="color: #ff505080;"></i>
+              </span></a>
+        </li>
+        <li class="nav-item pointer">
+            <a class="pointer nav-link rounded-pill note-link d-flex align-items-center px-2 px-md-3 mr-0 mr-md-2"> 
+              <span class="d-none d-md-block">
+                Medium <i class="point fa fa-circle ml-1 font-10" style="color: #2cabe380;"></i>
+              </span></a>
+        </li>
+        <li class="nav-item pointer">
+            <a class="pointer nav-link rounded-pill note-link d-flex align-items-center px-2 px-md-3 mr-0 mr-md-2" >
+               <span class="d-none d-md-block">
+                 Low <i class="point fa fa-circle ml-1 font-10" style="color: #2cd07e80;"></i>
+                </span></a>
+        </li>
+        <li class="nav-item ml-auto pointer">
+            <a class="pointer nav-link btn-primary rounded-pill d-flex align-items-center px-3" data-toggle="modal" data-target="#newNote"> 
+              <span class="d-none d-md-block font-14" style="color: white;">Add Note</span></a>
+        </li>
+    </ul>
+    <div class="tab-content bg-transparent">
+        <div id="note-full-container" class="note-has-grid row">
+          <ng-container *ngIf="(appState$ | async) as result" [ngSwitch]="result.dataState">
+            <ng-container *ngSwitchCase="DataState.LOADING">
+              <div  class="col-md-12 single-note-item text-center">
+                  <div class="spinner-border text-info" role="status"></div>
+              </div>
+            </ng-container>
+            <ng-container *ngSwitchCase="DataState.ERROR">
+              <div class="alert-danger">
+                {{ result.error }}
+              </div>
+            </ng-container>
+            <ng-container *ngSwitchCase="DataState.LOADED">
+              <div *ngFor="let note of result?.data?.notes" class="col-md-4 single-note-item"
+              [ngClass]="[note.level === 'HIGH' ? 'note-important' : '',
+                          note.level === 'MEDIUM' ? 'note-social' : '',
+                          note.level === 'LOW' ? 'note-business' : '']">
+                  <div class="card card-body">
+                    <span class="side-stick"></span>
+                    <h5 class="note-title text-truncate w-75 mb-0">
+                       <i class="point fa fa-circle ml-1 font-10"></i>
+                       {{ note.title }}
+                    </h5>
+                      <p class="note-date font-12 text-muted">Since {{ note.createdAt | date: 'hh:mm, dd MMMM yyyy'}}</p>
+                      <div class="note-content">
+                          <p class="note-inner-content text-muted">
+                            {{ note.description }}
+                          </p>
+                      </div>
+                      <div class="d-flex align-items-center">
+                          <span class="mr-1 pointer">
+                            <i class="fa fa-trash remove-note">
+                            </i></span>
+                          <div class="ml-auto">
+                              <div class="category-selector btn-group">
+                                  <a class="pointer nav-link label-group p-0" role="button" aria-haspopup="true" aria-expanded="true">
+                                    <span class="mr-1"><i class="fa fa-edit remove-note"></i></span>
+                                  </a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>           
+            </ng-container>
+          </ng-container>
+            
+        </div>
+    </div>
