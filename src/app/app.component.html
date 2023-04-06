@@ -66,7 +66,7 @@
                             </i></span>
                           <div class="ml-auto">
                               <div class="category-selector btn-group">
-                                  <a class="pointer nav-link label-group p-0" role="button" aria-haspopup="true" aria-expanded="true">
+                                  <a class="pointer nav-link label-group p-0" id="editNoteButton" data-toggle="modal" data-target="#editNote" role="button" aria-haspopup="true" aria-expanded="true">
                                     <span class="mr-1"><i class="fa fa-edit remove-note"></i></span>
                                   </a>
                               </div>
@@ -79,3 +79,116 @@
             
         </div>
     </div>
+
+    <!-- <a id="editNoteButton" data-toggle="modal" data-target="#editNote"> hhhhhhhhhhhhh
+    </a> -->
+  
+    <!-- Add Note Modal -->
+    <div class="modal fade" id="newNote" tabindex="-1" role="dialog" aria-labelledby="addNoteoteModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title text-white">Add a Note</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="notes-box">
+                        <div class="notes-content">
+                            <form #noteForm="ngForm" (ngSubmit)="saveNote(noteForm)">
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <div class="note-title">
+                                            <label>Title</label>
+                                            <input name="title" ngModel required type="text" class="form-control" minlength="5" maxlength="255" placeholder="Title" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <div class="note-title">
+                                            <label>Priority</label>
+                                            <select class="custom-select" ngModel="HIGH" required name="level">
+                                              <option [value]="Level.HIGH">{{ Level.HIGH }}</option>
+                                              <option [value]="Level.MEDIUM">{{ Level.MEDIUM }}</option>
+                                              <option [value]="Level.LOW">{{ Level.LOW }}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="note-description">
+                                            <label>Description</label>
+                                            <textarea name="description" ngModel required class="form-control" minlength="10" maxlength="255" placeholder="Description" rows="3"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-danger" id="closeModal" data-dismiss="modal">Discard</button>
+                                    <button type="submit" [disabled]="noteForm.invalid || (isLoading$ | async)" class="btn btn-info">
+                                      <i *ngIf="isLoading$ | async" class="fas fa-spinner fa-spin"></i>
+                                      <span *ngIf="isLoading$ | async">Saving...</span>
+                                      <span *ngIf="!(isLoading$ | async)">Save</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <!-- Edit Note Modal -->
+     <div class="modal fade" id="editNote" tabindex="-1" role="dialog" aria-labelledby="editNoteoteModal" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content border-0">
+              <div class="modal-header bg-info text-white">
+                  <h5 class="modal-title text-white">Edit Note</h5>
+                  <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <div class="notes-box">
+                      <div class="notes-content">
+                          <form>
+                              <div class="row">
+                                  <div class="col-md-12 mb-3">
+                                      <div class="note-title">
+                                          <label>Title</label>
+                                          <input type="hidden" name="id" id="id">
+                                          <input  name="title" required type="text" class="form-control" minlength="5" maxlength="255" placeholder="Title" />
+                                      </div>
+                                  </div>
+                                  <div class="col-md-12 mb-3">
+                                      <div class="note-title">
+                                          <label>Priority</label>
+                                          <select class="custom-select"  required name="level">
+                                            <option [value]=""></option>
+                                            <option [value]=""></option>
+                                            <option [value]=""></option>
+                                          </select>
+                                      </div>
+                                  </div>
+                                  <div class="col-md-12">
+                                      <div class="note-description">
+                                          <label>Description</label>
+                                          <textarea name="description" required class="form-control" minlength="10" maxlength="255" placeholder="Description" rows="3"></textarea>
+                                      </div>
+                                  </div>
+                              </div>
+                              <div class="modal-footer">
+                                  <button class="btn btn-danger" id="closeModalEdit" data-dismiss="modal">Discard</button>
+                                  <button type="submit" class="btn btn-info">
+                                    <i  class="fas fa-spinner fa-spin"></i>
+                                    <span >Saving...</span>
+                                    <span >Save</span>
+                                  </button>
+                              </div>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  </div>

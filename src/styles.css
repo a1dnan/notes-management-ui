@@ -36,6 +36,9 @@ body{
  .note-has-grid .single-note-item .favourite-note {
      cursor: pointer
  }
+ .pointer{
+    cursor: pointer;
+ }
 
  .note-has-grid .single-note-item .side-stick {
      position: absolute;
