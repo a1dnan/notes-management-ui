@@ -3,24 +3,28 @@
 <div class="page-content container note-has-grid">
     <ul class="nav nav-pills p-3 bg-white mb-3 rounded-pill align-items-center">
         <li class="nav-item pointer">
-            <a class="pointer nav-link rounded-pill note-link d-flex align-items-center px-2 px-md-3 mr-0 mr-md-2">
-                <span class="d-none d-md-block">All Notes</span>
+            <a class="pointer nav-link rounded-pill note-link d-flex align-items-center px-2 px-md-3 mr-0 mr-md-2"
+            [class.active]="(filteredLevel$ | async) === Level.ALL">
+                <span (click)="filterNotes(Level.ALL)" class="d-none d-md-block">All Notes</span>
             </a>
         </li>
         <li class="nav-item pointer">
-            <a class="pointer nav-link rounded-pill note-link d-flex align-items-center px-2 px-md-3 mr-0 mr-md-2">
+            <a class="pointer nav-link rounded-pill note-link d-flex align-items-center px-2 px-md-3 mr-0 mr-md-2"
+            (click)="filterNotes(Level.HIGH)" [class.active]="(filteredLevel$ | async) === Level.HIGH">
               <span class="d-none d-md-block">
                 High <i class="point fa fa-circle ml-1 font-10" style="color: #ff505080;"></i>
               </span></a>
         </li>
         <li class="nav-item pointer">
-            <a class="pointer nav-link rounded-pill note-link d-flex align-items-center px-2 px-md-3 mr-0 mr-md-2"> 
+            <a class="pointer nav-link rounded-pill note-link d-flex align-items-center px-2 px-md-3 mr-0 mr-md-2"
+            (click)="filterNotes(Level.MEDIUM)" [class.active]="(filteredLevel$ | async) === Level.MEDIUM"> 
               <span class="d-none d-md-block">
                 Medium <i class="point fa fa-circle ml-1 font-10" style="color: #2cabe380;"></i>
               </span></a>
         </li>
         <li class="nav-item pointer">
-            <a class="pointer nav-link rounded-pill note-link d-flex align-items-center px-2 px-md-3 mr-0 mr-md-2" >
+            <a class="pointer nav-link rounded-pill note-link d-flex align-items-center px-2 px-md-3 mr-0 mr-md-2" 
+            (click)="filterNotes(Level.LOW)" [class.active]="(filteredLevel$ | async) === Level.LOW">
                <span class="d-none d-md-block">
                  Low <i class="point fa fa-circle ml-1 font-10" style="color: #2cd07e80;"></i>
                 </span></a>
@@ -61,7 +65,7 @@
                           </p>
                       </div>
                       <div class="d-flex align-items-center">
-                          <span class="mr-1 pointer">
+                          <span (click)="deleteNote(note.id)" class="mr-1 pointer">
                             <i class="fa fa-trash remove-note">
                             </i></span>
                           <div class="ml-auto">

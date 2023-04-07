@@ -7,6 +7,7 @@ import { DataState } from './enums/datastate';
 import { Level } from './enums/level';
 import { NgForm } from '@angular/forms';
 import { Note } from './interfaces/note';
+import { NotificationService } from './service/notification.service';
 
 @Component({
   selector: 'app-root',
@@ -23,9 +24,12 @@ export class AppComponent implements OnInit{
   isLoading$ = this.isLoadingSubject.asObservable();
   private selectedNoteSubject = new Subject<Note>();
   selectedNote$ = this.selectedNoteSubject.asObservable();
+  private filteredSubject = new BehaviorSubject<Level>(Level.ALL);
+  filteredLevel$ = this.filteredSubject.asObservable();
 
 
-  constructor(private noteService: NoteService){}
+  constructor(private noteService: NoteService,
+              private notificationServcie: NotificationService){}
 
   ngOnInit(): void {
 
@@ -33,10 +37,13 @@ export class AppComponent implements OnInit{
       map(response =>{
         //saving the data in the subject
         this.dataSubject.next(response);
+        this.filteredSubject.next(Level.ALL);
+        this.notificationServcie.onSuccess(response.message);
         return {dataState: DataState.LOADED, data: response}
       }),
       startWith( {dataState: DataState.LOADING} ),
       catchError((err: string) => {
+        this.notificationServcie.onError(err);
         return of({ dataState: DataState.ERROR, error: err })
       })
     );
@@ -54,11 +61,14 @@ export class AppComponent implements OnInit{
           noteForm.reset( { title:'', description: '', level: this.Level.HIGH} ); // Reset the form
           document.getElementById('closeModal')?.click();
           this.isLoadingSubject.next(false);
+          this.filteredSubject.next(Level.ALL);
+          this.notificationServcie.onSuccess(response.message);
           return {dataState: DataState.LOADED, data: this.dataSubject.value}
       }),
       //Load the existing data
       startWith( {dataState: DataState.LOADED, data: this.dataSubject.value} ),
       catchError((err: string) => {
+        this.notificationServcie.onError(err);
         this.isLoadingSubject.next(false);
         return of({ dataState: DataState.ERROR, error: err })
       })
@@ -77,15 +87,53 @@ export class AppComponent implements OnInit{
         this.dataSubject.next(<CustomHttpResponse>{...response, notes: this.dataSubject.value.notes})
           document.getElementById('closeModal')?.click();
           this.isLoadingSubject.next(false);
+          this.filteredSubject.next(Level.ALL);
+          this.notificationServcie.onSuccess(response.message);
           return {dataState: DataState.LOADED, data: this.dataSubject.value}
       }),
       //Load the existing data
       startWith( {dataState: DataState.LOADED, data: this.dataSubject.value} ),
       catchError((err: string) => {
         this.isLoadingSubject.next(false);
+        this.notificationServcie.onError(err);
         return of({ dataState: DataState.ERROR, error: err })
       })
     ); 
+  }
+
+  filterNotes(level: Level): void {
+    this.filteredSubject.next(level);
+    this.appState$ = this.noteService.filterNotes$(level, this.dataSubject.value)
+      .pipe(
+        map(response => {
+          this.notificationServcie.onSuccess(response.message);
+          return { dataState: DataState.LOADED, data: response }
+        }),
+        startWith({ dataState: DataState.LOADED, data: this.dataSubject.value }),
+        catchError((error: string) => {
+          this.notificationServcie.onError(error);
+          return of({ dataState: DataState.ERROR, error })
+        })
+      );
+  }
+
+  deleteNote(noteId: number): void {
+    this.appState$ = this.noteService.delete$(noteId)
+      .pipe(
+        map(response => {
+          this.dataSubject.next(<CustomHttpResponse>
+            { ...response,
+              notes: this.dataSubject.value.notes.filter(note => note.id !== noteId)})
+              this.filteredSubject.next(Level.ALL);
+              this.notificationServcie.onSuccess(response.message);
+          return { dataState: DataState.LOADED, data: this.dataSubject.value }
+        }),
+        startWith({ dataState: DataState.LOADED, data: this.dataSubject.value }),
+        catchError((error: string) => {
+          this.notificationServcie.onError(error);
+          return of({ dataState: DataState.ERROR, error })
+        })
+      );
   }
 
   selectNote(note: Note): void {
