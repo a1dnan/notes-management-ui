@@ -1,8 +1,8 @@
+import { Note } from './../interfaces/note';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, tap, throwError } from 'rxjs';
 import { CustomHttpResponse } from '../interfaces/custom-http-response';
-import { Note } from '../interfaces/note';
 import { Level } from '../enums/level';
 
 @Injectable({
@@ -60,6 +60,24 @@ export class NoteService {
       tap(console.log),
       catchError(this.handleError)
     );
+
+      // procedural approach
+    getNote() : Observable<CustomHttpResponse>{
+        return this.http.get<CustomHttpResponse>(`${this.server}/note`);
+    }
+
+    saveNote(note : Note) : Observable<CustomHttpResponse>{
+      return this.http.post<CustomHttpResponse>(`${this.server}/note`, note);
+    }
+
+    updateNote(note : Note) : Observable<CustomHttpResponse>{
+      return this.http.put<CustomHttpResponse>(`${this.server}/note`, note);
+    }
+
+    deleteNote(noteId: number) : Observable<CustomHttpResponse>{
+      return this.http.delete<CustomHttpResponse>(`${this.server}/note/${noteId}`);
+    }
+
 
   private handleError(err: HttpErrorResponse): Observable<never> {
     console.log(err);
